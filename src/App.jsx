@@ -1,29 +1,17 @@
+import * as React from "react";
 import "./App.css";
-
-const todolist = [
-  {
-    id: 123,
-    title: "react",
-  },
-  {
-    id: 345,
-    title: "python",
-  },
-  {
-    id: 678,
-    title: "java",
-  },
-];
+import TodoList from "./TodoList.jsx";
+import AddTodoForm from "./AddTodoForm.jsx";
 
 function App() {
+  const [newTodo, setNewTodo] = React.useState("");
+
   return (
     <>
       <h1>Todo List</h1>
-      <ul>
-        {todolist.map(function (list) {
-          return <li key={list.id}>{list.title}</li>;
-        })}
-      </ul>
+      <TodoList />
+      <AddTodoForm onAddTodo={setNewTodo} />
+      <p>{newTodo}</p>
     </>
   );
 }
