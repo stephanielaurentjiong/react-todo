@@ -1,3 +1,4 @@
+import TodoListItem from "./TodoListItem.jsx";
 
 const todolist = [
   {
@@ -14,12 +15,14 @@ const todolist = [
   },
 ];
 
-function TodoList() {
+const TodoList = () => {
   return (
     <>
       <ul>
         {todolist.map(function (list) {
-          return <li key={list.id}>{list.title}</li>;
+          return (
+            <TodoListItem key={list.id} todo={list} />
+          )
         })}
       </ul>
     </>
