@@ -12,14 +12,14 @@ import TodoListItem from "./TodoListItem.jsx";
  * @returns props.todoList - An array of todo objects to be displayed.
  *                           Each todo object must have an `id` (unique identifier) and a `title` (string for the todo title).
  */
-const TodoList = ({todoList}) => {
+const TodoList = ({todoList, onRemoveTodo}) => {
   return (
     <>
       <ul>
         {/* Map over the todoList array to render each todo item */}
         {todoList.map(function (item) {
           // Render each todo using the TodoListItem component and provide a unique key
-          return <TodoListItem key={item.id} todo={item} />;
+          return <TodoListItem key={item.id} todo={item} onRemoveTodo={onRemoveTodo} />;
         })}
       </ul>
     </>

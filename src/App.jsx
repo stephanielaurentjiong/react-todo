@@ -5,7 +5,7 @@ import AddTodoForm from "./AddTodoForm.jsx";
 
 /**
  * Custom hook to manage a semi-persistent state for the todo list.
- * 
+ *
  * This hook initializes the state with data from `localStorage` if available.
  * Whenever the state changes, the updated state is saved to `localStorage`.
  *
@@ -45,12 +45,17 @@ function App() {
     setTodoList([...todoList, newTodo]);
   };
 
+  const removeTodo = (id) => {
+    const newTodoList = todoList.filter((todo) => todo.id !== id);
+    setTodoList(newTodoList);
+  };
+
   return (
     <>
       <h1>Todo List</h1>
 
       {/* Render TodoList component and pass todoList function as a todoList prop */}
-      <TodoList todoList={todoList} />
+      <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
 
       {/* Render the AddTodoForm component and pass the addTodo function as the onAddTodo prop */}
       <AddTodoForm onAddTodo={addTodo} />

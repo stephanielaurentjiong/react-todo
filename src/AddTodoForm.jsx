@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import * as React from "react";
+import InputWithLabel from "./InputWithLabel";
 
 /**
  * Component for adding a new todo item.
@@ -44,14 +45,11 @@ function AddTodoForm({ onAddTodo }) {
   return (
     <>
       <form onSubmit={handleAddTodo}>
-        <label htmlFor="todoTitle">Title</label>
-        <input
-          name="title"
-          type="text"
-          id="todoTitle"
-          value={todoTitle} // Pass in the  todoTitle state (which is the given title from user input)
-          onChange={handleTitleChange} // Update the state whenever the input value changes.
-        ></input>
+        <InputWithLabel 
+        todoTitle ={todoTitle} 
+        handleTitleChange={handleTitleChange} > 
+        TITLE TITLE TITLE:
+        </InputWithLabel>
         <button>Add</button>
       </form>
     </>
