@@ -3,27 +3,6 @@ import "./App.css";
 import TodoList from "./TodoList.jsx";
 import AddTodoForm from "./AddTodoForm.jsx";
 
-/**
- * Custom hook to manage a semi-persistent state for the todo list.
- *
- * This hook initializes the state with data from `localStorage` if available.
- * Whenever the state changes, the updated state is saved to `localStorage`.
- *
- * @returns {[Array, Function]} An array containing the current todo list and its state updater function.
- */
-const useSemiPersistentState = () => {
-  //Create state variable with inital value empty array
-  const [todoList, setTodoList] = React.useState(
-    JSON.parse(localStorage.getItem("savedTodoList")) || []
-  );
-
-  // Side-effect to save the todo list to `localStorage` whenever it changes.
-  React.useEffect(() => {
-    localStorage.setItem("savedTodoList", JSON.stringify(todoList));
-  }, [todoList]);
-
-  return [todoList, setTodoList];
-};
 
 /**
  *
@@ -32,8 +11,38 @@ const useSemiPersistentState = () => {
  *
  */
 function App() {
-  // Use the custom hook to manage a semi-persistent todo list state.
-  const [todoList, setTodoList] = useSemiPersistentState("");
+
+  //Create state variable with inital value empty array
+  const [todoList, setTodoList] = React.useState([]);
+
+  // Create state variable to track whether the initial fetch is in progress
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  // Side effect to load the saved todo list from localStorage
+  // Create a new Promise that simulates a delayed fetch of the todo list from localStorage
+  React.useEffect(() => {
+    new Promise((resolve, reject) => {
+      // Resolve the promise with an object containing the fetched todo list
+      setTimeout(() => resolve({data : { todoList: JSON.parse(localStorage.getItem("savedTodoList")) || []
+      }}), 2000)
+      // Use the resolved value (result.data.todoList) to update the todoList state
+    })
+    .then((result) => {
+      // Update the todoList state with the fetched data
+      setTodoList(result.data.todoList);
+      // Set `isLoading` to false after the data is loaded
+      setIsLoading(false);
+    })
+  })
+
+
+  // Side-effect to save the todo list to `localStorage` whenever it changes.
+  React.useEffect(() => {
+    // Ensure `localStorage` is updated only after the initial fetch is complete
+    if (!isLoading) {
+      localStorage.setItem("savedTodoList", JSON.stringify(todoList));  
+    }
+  }, [todoList]);
 
   /**
    * Add a new todo item to the todo list.
@@ -53,9 +62,13 @@ function App() {
   return (
     <>
       <h1>Todo List</h1>
-
-      {/* Render TodoList component and pass todoList function as a todoList prop */}
-      <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+      {isLoading ? (
+        // If the `isLoading` state is true (fetching in progress), display a loading message
+        <p>Loading</p>
+      ) : (
+        // If `isLoading` is false (fetching complete), render the `TodoList` component with the fetched `todoList` data
+        <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+      )}
 
       {/* Render the AddTodoForm component and pass the addTodo function as the onAddTodo prop */}
       <AddTodoForm onAddTodo={addTodo} />
