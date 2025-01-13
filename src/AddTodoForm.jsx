@@ -28,19 +28,26 @@ function AddTodoForm({ onAddTodo }) {
   };
 
   /**
-   * Handle form submission
-   *
-   * @param {*} event
-   */
-  const handleAddTodo = (event) => {
-    // Prevent the default form submission behavior.
-    event.preventDefault();
+ * Handle form submission.
+ *
+ * @param {*} event
+ */
+const handleAddTodo = async (event) => {
+  // Prevent the default form submission behavior.
+  event.preventDefault();
 
-    // Call the onAddTodo callback handler with the new todo (title and unique id).
-    onAddTodo({ title: todoTitle, id: Date.now() });
+  // Trim the title to remove extra spaces.
+  const newTodoTitle = todoTitle.trim();
 
-    event.target.reset();
-  };
+  // Check if the title is not empty.
+  if (newTodoTitle) {
+    await onAddTodo(newTodoTitle); // Pass the title to the parent function for API handling.
+    setTodoTitle(""); // Clear the input field after submission.
+  } else {
+    console.error("Todo title cannot be empty");
+  }
+};
+
 
   return (
     <>
