@@ -18,22 +18,44 @@ function App() {
   // Create state variable to track whether the initial fetch is in progress
   const [isLoading, setIsLoading] = React.useState(true);
 
-  // Side effect to load the saved todo list from localStorage
-  // Create a new Promise that simulates a delayed fetch of the todo list from localStorage
-  React.useEffect(() => {
-    new Promise((resolve, reject) => {
-      // Resolve the promise with an object containing the fetched todo list
-      setTimeout(() => resolve({data : { todoList: JSON.parse(localStorage.getItem("savedTodoList")) || []
-      }}), 2000)
-      // Use the resolved value (result.data.todoList) to update the todoList state
-    })
-    .then((result) => {
-      // Update the todoList state with the fetched data
-      setTodoList(result.data.todoList);
-      // Set `isLoading` to false after the data is loaded
+  const fetchData = async() => {
+
+    const options = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+      },
+    };
+
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`
+
+    try {
+      const response = await fetch(url, options)
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      
+      const todos = data.records.map((todo) => ({
+        id: todo.id,
+        title: todo.fields.title,
+      }));
+   
+      setTodoList(todos);
       setIsLoading(false);
-    })
-  })
+      
+    } catch (error){
+      console.log(error.message);
+    }
+  }
+
+  // Side effect to load the saved todo list from Airtable
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
 
   // Side-effect to save the todo list to `localStorage` whenever it changes.
@@ -45,13 +67,41 @@ function App() {
   }, [todoList]);
 
   /**
-   * Add a new todo item to the todo list.
+   * Add a new todo item to the Airtable API and update the list only on success.
    *
-   * @param {*} newTodo new todo title from user input
+   * @param {string} newTodoTitle The title of the new todo.
    */
-  const addTodo = (newTodo) => {
-    // Update the state with the new todo added to the existing list.
-    setTodoList([...todoList, newTodo]);
+  const addTodo = async (newTodoTitle) => {
+    const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+      },
+      body: JSON.stringify({
+        fields: {
+          title: newTodoTitle,
+        },
+      }),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const newTodo = {
+        id: data.id,
+        title: data.fields.title,
+      };
+
+      setTodoList([...todoList, newTodo]);
+    } catch (error) {
+      console.log(`Failed to add todo: ${error.message}`);
+    }
   };
 
   const removeTodo = (id) => {
