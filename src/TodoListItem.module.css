@@ -1,0 +1,27 @@
+.ListItem {
+  color: #4f4f4f;
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.ListItem:hover {
+  background-color: #e5ede2;
+  color: #6b8e74;
+  transform: scale(1.02);
+}
+
+button {
+  background-color: #7a8f73;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #5c7a63;
+}
