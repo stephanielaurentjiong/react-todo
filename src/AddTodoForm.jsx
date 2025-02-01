@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 import * as React from "react";
 import InputWithLabel from "./InputWithLabel";
+import styles from "./AddTodoForm.module.css";
 
 /**
  * Component for adding a new todo item.
- * 
- * @param props.onAddTodo - Callback function to add a new todo. 
+ *
+ * @param props.onAddTodo - Callback function to add a new todo.
  *                                      Receives an object with the todo's title and id.
  * @returns {JSX.Element} The AddTodoForm component.
  */
@@ -28,36 +29,36 @@ function AddTodoForm({ onAddTodo }) {
   };
 
   /**
- * Handle form submission.
- *
- * @param {*} event
- */
-const handleAddTodo = async (event) => {
-  // Prevent the default form submission behavior.
-  event.preventDefault();
+   * Handle form submission.
+   *
+   * @param {*} event
+   */
+  const handleAddTodo = async (event) => {
+    // Prevent the default form submission behavior.
+    event.preventDefault();
 
-  // Trim the title to remove extra spaces.
-  const newTodoTitle = todoTitle.trim();
+    // Trim the title to remove extra spaces.
+    const newTodoTitle = todoTitle.trim();
 
-  // Check if the title is not empty.
-  if (newTodoTitle) {
-    await onAddTodo(newTodoTitle); // Pass the title to the parent function for API handling.
-    setTodoTitle(""); // Clear the input field after submission.
-  } else {
-    console.error("Todo title cannot be empty");
-  }
-};
-
+    // Check if the title is not empty.
+    if (newTodoTitle) {
+      await onAddTodo(newTodoTitle); // Pass the title to the parent function for API handling.
+      setTodoTitle(""); // Clear the input field after submission.
+    } else {
+      console.error("Todo title cannot be empty");
+    }
+  };
 
   return (
     <>
-      <form onSubmit={handleAddTodo}>
-        <InputWithLabel 
-        todoTitle ={todoTitle} 
-        handleTitleChange={handleTitleChange} > 
-        TITLE TITLE TITLE:
-        </InputWithLabel>
-        <button>Add</button>
+      <form onSubmit={handleAddTodo} className={styles.addTodoContainer}>
+        <label className={styles.addTodoLabel}> Add Todo:</label>
+        <InputWithLabel
+          todoTitle={todoTitle}
+          handleTitleChange={handleTitleChange}
+          className={styles.addTodoInput} 
+        />
+        <button className={styles.addTodoButton}>Add</button>
       </form>
     </>
   );
