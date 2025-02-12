@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./App.css";
-import TodoList from "./TodoList.jsx";
-import AddTodoForm from "./AddTodoForm.jsx";
+import TodoList from "./components/TodoList.jsx";
+import AddTodoForm from "./components/AddTodoForm.jsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 /**

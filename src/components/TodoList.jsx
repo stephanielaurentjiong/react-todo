@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import TodoListItem from "./TodoListItem.jsx";
+import PropTypes from 'prop-types'; // ES6
 
 
 /**
@@ -24,6 +25,17 @@ const TodoList = ({todoList, onRemoveTodo}) => {
       </ul>
     </>
   );
+};
+// Define PropTypes for InputWithLabel
+// Define PropTypes for TodoList
+TodoList.propTypes = {
+  todoList: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired, // ID can be a string or number
+      title: PropTypes.string.isRequired, // Title must be a string
+    })
+  ).isRequired,
+  onRemoveTodo: PropTypes.func.isRequired, // Ensures onRemoveTodo is a required function
 };
 
 export default TodoList;

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import * as React from "react";
+import PropTypes from 'prop-types'; // ES6
 
 /**
  * A component that handles input label
@@ -28,5 +29,13 @@ const InputWithLabel = ({ todoTitle, handleTitleChange, children }) => {
     </>
   );
 };
+
+// Define PropTypes for InputWithLabel
+InputWithLabel.propTypes = {
+  todoTitle: PropTypes.string.isRequired, // Ensures todoTitle is a required string
+  handleTitleChange: PropTypes.func.isRequired, // Ensures handleTitleChange is a required function
+  children: PropTypes.node.isRequired, // Ensures children is a required node (React element)
+};
+
 
 export default InputWithLabel;

@@ -2,6 +2,7 @@
 import * as React from "react";
 import InputWithLabel from "./InputWithLabel";
 import styles from "./AddTodoForm.module.css";
+import PropTypes from 'prop-types'; // ES6
 
 /**
  * Component for adding a new todo item.
@@ -63,5 +64,8 @@ function AddTodoForm({ onAddTodo }) {
     </>
   );
 }
-
+// Define PropTypes for AddTodoForm
+AddTodoForm.propTypes = {
+  onAddTodo: PropTypes.func.isRequired, // Ensures onAddTodo is a required function
+};
 export default AddTodoForm;
