@@ -11,11 +11,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
  *
  */
 function App() {
-  //Create state variable with inital value empty array
+  // Create state variables
   const [todoList, setTodoList] = React.useState([]);
-
-  // Create state variable to track whether the initial fetch is in progress
   const [isLoading, setIsLoading] = React.useState(true);
+  const [sortOrder, setSortOrder] = React.useState("asc"); // Default: ascending order
 
   const fetchData = async () => {
     const options = {
@@ -25,9 +24,12 @@ function App() {
       },
     };
 
+    // Fetch sorted data from Airtable
     const url = `https://api.airtable.com/v0/${
       import.meta.env.VITE_AIRTABLE_BASE_ID
-    }/${import.meta.env.VITE_TABLE_NAME}`;
+    }/${
+      import.meta.env.VITE_TABLE_NAME
+    }?sort[0][field]=title&sort[0][direction]=${sortOrder}`;
 
     try {
       const response = await fetch(url, options);
@@ -50,14 +52,13 @@ function App() {
     }
   };
 
-  // Side effect to load the saved todo list from Airtable
+  // Fetch data when component mounts or when sortOrder changes
   React.useEffect(() => {
     fetchData();
-  }, []);
+  }, [sortOrder]);
 
-  // Side-effect to save the todo list to `localStorage` whenever it changes.
+  // Save to localStorage when todoList updates
   React.useEffect(() => {
-    // Ensure `localStorage` is updated only after the initial fetch is complete
     if (!isLoading) {
       localStorage.setItem("savedTodoList", JSON.stringify(todoList));
     }
@@ -97,15 +98,43 @@ function App() {
         title: data.fields.title,
       };
 
-      setTodoList([...todoList, newTodo]);
+      // Add new task and sort the list immediately
+      setTodoList((prevTodos) => {
+        const updatedTodos = [...prevTodos, newTodo];
+
+        return updatedTodos.sort((a, b) => {
+          return sortOrder === "asc"
+            ? a.title.localeCompare(b.title)
+            : b.title.localeCompare(a.title);
+        });
+      });
     } catch (error) {
       console.log(`Failed to add todo: ${error.message}`);
     }
   };
 
-  const removeTodo = (id) => {
-    const newTodoList = todoList.filter((todo) => todo.id !== id);
-    setTodoList(newTodoList);
+  const removeTodo = async (id) => {
+     const url = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}/${id}`;
+
+  const options = {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${import.meta.env.VITE_AIRTABLE_API_TOKEN}`,
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to delete todo: ${response.status}`);
+    }
+
+    // ✅ If the deletion was successful, remove the todo from state
+    setTodoList((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  } catch (error) {
+    console.error(error.message);
+  }
   };
 
   return (
@@ -116,15 +145,21 @@ function App() {
           element={
             <>
               <h1>Todo List</h1>
+              <button
+               
+                onClick={() =>
+                  setSortOrder(sortOrder === "asc" ? "desc" : "asc")
+                }
+              >
+                Toggle Sort Order ({sortOrder === "asc" ? "A-Z" : "Z-A"})
+              </button>
+
               {isLoading ? (
-                // If the `isLoading` state is true (fetching in progress), display a loading message
-                <p>Loading</p>
+                <p>Loading...</p>
               ) : (
-                // If `isLoading` is false (fetching complete), render the `TodoList` component with the fetched `todoList` data
                 <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
               )}
 
-              {/* Render the AddTodoForm component and pass the addTodo function as the onAddTodo prop */}
               <AddTodoForm onAddTodo={addTodo} />
             </>
           }

@@ -34,7 +34,7 @@ const InputWithLabel = ({ todoTitle, handleTitleChange, children }) => {
 InputWithLabel.propTypes = {
   todoTitle: PropTypes.string.isRequired, // Ensures todoTitle is a required string
   handleTitleChange: PropTypes.func.isRequired, // Ensures handleTitleChange is a required function
-  children: PropTypes.node.isRequired, // Ensures children is a required node (React element)
+  children: PropTypes.node, // Ensures children is a required node (React element)
 };
 
 
