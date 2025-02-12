@@ -40,3 +40,21 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Style the sort toggle button */
+.sortToggleBtn {
+  margin-top: 15px; /* Add space between h1 and the button */
+  margin-bottom: 20px; /* Add space below the button */
+  background-color: #7a8f73;
+  color: white;
+  font-size: 1rem;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+  cursor: pointer;
+}
+
+.sortToggleBtn:hover {
+  background-color: #5c7a63;
+}
